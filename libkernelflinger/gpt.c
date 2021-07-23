@@ -438,6 +438,7 @@ static void copy_part(struct gpt_partition *in, struct gpt_partition *out)
 			sizeof(out->name) - PREFIX_LEN * sizeof(CHAR16));
 }
 
+#ifdef MULTI_USER
 EFI_STATUS get_dedicated_disk(struct gpt_partition_interface *gpart)
 {
 	EFI_STATUS ret;
@@ -515,6 +516,7 @@ EFI_STATUS get_dedicated_disk(struct gpt_partition_interface *gpart)
 	debug(L"dedicated data parition blocks: 0x%X", gpart->part.ending_lba + 1);
 	return EFI_SUCCESS;
 }
+#endif
 
 EFI_STATUS gpt_get_partition_by_label(const CHAR16 *label,
 				      struct gpt_partition_interface *gpart,
@@ -526,6 +528,7 @@ EFI_STATUS gpt_get_partition_by_label(const CHAR16 *label,
 	if (!label || !gpart)
 		return EFI_INVALID_PARAMETER;
 
+	#ifdef MULTI_USER
 	/* if dynamic partition enabled, data partition's name is "userdata";
 	 * if dynamic partition disabled, data partition's name is "data"
 	 */
@@ -536,6 +539,7 @@ EFI_STATUS gpt_get_partition_by_label(const CHAR16 *label,
 			return EFI_SUCCESS;
 		}
 	}
+	#endif
 
 	ret = gpt_cache_partition(log_unit);
 	if (EFI_ERROR(ret))
